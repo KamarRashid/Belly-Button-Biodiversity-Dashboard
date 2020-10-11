@@ -1,3 +1,20 @@
+// Initialize the page with a default plot of first subject in data sample
+function init() {
+    // Read in data
+    d3.json('Data/samples.json').then((data) => {
+        var firstSubject = data.names[0];
+        // Create charts based on first subject
+        createBarChart(firstSubject);
+        createBubbleChart(firstSubject);
+        createDemographics(firstSubject);
+        
+        // Call function to create the dropdown list
+        subjectDropDown()
+    })
+};
+// Call function to intialize dashboard
+init()
+
 // Test subject ID dropdown menu
 function subjectDropDown() {
     // Read in data
@@ -14,22 +31,6 @@ function subjectDropDown() {
 
     });
 };
-// Call function to create the dropdown list
-subjectDropDown()
-
-// Initialize the page with a default plot of first subject in data sample
-function init() {
-    // Read in data
-    d3.json('Data/samples.json').then((data) => {
-        var firstSubject = data.names[0];
-
-        createBarChart(firstSubject);
-        createBubbleChart(firstSubject);
-        createDemographics(firstSubject);
-    })
-};
-// Call function to intialize dashboard
-init()
 
 // On change to the DOM function - get new subject ID when changed
 function optionChanged(newSample) {
@@ -47,19 +48,11 @@ function createBarChart(subject) {
         var samples = data.samples;
         var filterSubject = samples.filter(sample => sample.id == subject);
         var results = filterSubject[0];
-        
-        console.log(data)
-        console.log(filterSubject)
-        console.log(results)
 
         // Create variables for bar chart
         var sampleValues = results.sample_values;
         var otuIDs = results.otu_ids;
         var otuLabels = results.otu_labels;
-
-        console.log(sampleValues)
-        console.log(otuIDs)
-        console.log(otuLabels)
         
         // Bar data trace
         var trace1 = [{
@@ -81,7 +74,6 @@ function createBarChart(subject) {
 
         // Update bar plot
         Plotly.newPlot('bar', trace1, layout);
-        // Plotly.restyle('bar', trace1, layout);
     });
 }
 
@@ -97,10 +89,6 @@ function createBubbleChart(subject) {
         var sampleValues = results.sample_values;
         var otuIDs = results.otu_ids;
         var otuLabels = results.otu_labels;
-        
-        console.log(sampleValues)
-        console.log(otuIDs)
-        console.log(otuLabels)
 
         // Bubble data trace
         var trace2 = [{
@@ -123,7 +111,6 @@ function createBubbleChart(subject) {
 
         // Update bubble plot
         Plotly.newPlot('bubble', trace2, layout);
-        // Plotly.restyle('bubble', trace2, layout);
     });
 }
 
@@ -131,9 +118,21 @@ function createBubbleChart(subject) {
 function createDemographics(subject) {
     // Read in data
     d3.json('Data/samples.json').then((data) => {
-        var samples = data.samples;
-        var filterSubject = samples.filter(sample => sample.id == subject);
-        var results = filterSubject[0];
+        var metadata = data.metadata;
+        var filterMetadata = metadata.filter(sample => sample.id == subject);
+        var results = filterMetadata[0];
+
+        console.log(results)
+        
+        var metadataPanel = d3.select('#sample-metadata')
+
+        // clear the medatadata panel
+        metadataPanel.html("");
+
+        // Use d3 object entries to update metadata panel
+        Object.entries(results).forEach(([key, value]) => {
+            metadataPanel.append('tr').text(`${key}: ${value}`);
+        });
     });
 }
-// createBarChart('940')
+
