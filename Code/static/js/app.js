@@ -3,10 +3,12 @@ function init() {
     // Read in data
     d3.json('Data/samples.json').then((data) => {
         var firstSubject = data.names[0];
+        
         // Create charts based on first subject
         createBarChart(firstSubject);
         createBubbleChart(firstSubject);
         createDemographics(firstSubject);
+        createGaugeChart(firstSubject);
         
         // Call function to create the dropdown list
         subjectDropDown()
@@ -39,6 +41,7 @@ function optionChanged(newSample) {
     createBarChart(subject);
     createBubbleChart(subject);
     createDemographics(subject);
+    createGaugeChart(subject);
 };
 
 // Horizontal bar chart function
@@ -106,6 +109,9 @@ function createBubbleChart(subject) {
         var layout = {
             // title: `Subject ${subject}: OTUs`,
             xaxis: { title: "UTO-ID" },
+            margin: {
+                t: 0,
+            },
             // showlegend: true
         }
 
@@ -121,8 +127,6 @@ function createDemographics(subject) {
         var metadata = data.metadata;
         var filterMetadata = metadata.filter(sample => sample.id == subject);
         var results = filterMetadata[0];
-
-        console.log(results)
         
         var metadataPanel = d3.select('#sample-metadata')
 
@@ -136,3 +140,56 @@ function createDemographics(subject) {
     });
 }
 
+// Guage chart function
+function createGaugeChart(subject) {
+    
+    // Read in data
+    d3.json('Data/samples.json').then((data) => {
+        var metadata = data.metadata;
+        var filterMetadata = metadata.filter(sample => sample.id == subject);
+        var results = filterMetadata[0];
+        
+        // Subject washing frequency
+        wFreq = results.wfreq
+
+        tickVals = [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5,]
+        tickText = ['0-1', '1-2', '2-3', '3-4', '4-5', '5-6', '6-7', '7-8', '8-9']
+
+        // Guage data trace 
+        var trace3 = [
+            {
+                domain: { x: [0, 1], y: [0, 1] },
+                value: parseFloat(wFreq),
+                title: { text: 'Scrubs per Week' },
+                type: 'indicator',
+                
+                mode: 'gauge+number',
+                gauge: {
+                    axis: { range: [null, 9], ticks: '', tickmode: 'array', tickvals: tickVals, ticktext: tickText},
+                    bar: { color: 'rgb(103,0,13)' },
+                    steps: [
+                        { range: [0, 1], color: 'rgb(255,255,229)'},
+                        { range: [1, 2], color: 'rgb(247,252,185)'},
+                        { range: [2, 3], color: 'rgb(217,240,163)'},
+                        { range: [3, 4], color: 'rgb(173,221,142)'},
+                        { range: [4, 5], color: 'rgb(120,198,121)'},
+                        { range: [5, 6], color: 'rgb(65,171,93)'},                        
+                        { range: [6, 7], color: 'rgb(35,132,67)'},
+                        { range: [7, 8], color: 'rgb(0,104,55)'},
+                        { range: [8, 9], color: 'rgb(0,69,41)'},
+                    ]
+                }
+            }
+        ];
+
+        var layout = {
+            title: 'Belly Button Washing Frequency',
+            width: 400,
+            height: 400,
+            margin: { t: 25, l: 20, r: 20 }
+        };
+        
+        // Update guage chart
+        Plotly.newPlot("gauge", trace3, layout);
+    });
+}  
