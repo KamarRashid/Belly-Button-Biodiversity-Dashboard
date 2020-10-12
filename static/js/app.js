@@ -107,7 +107,7 @@ function createBubbleChart(subject) {
 
         // Bubble layout
         var layout = {
-            // title: `Subject ${subject}: OTUs`,
+            title: `Subject ${subject}: OTUs`,
             xaxis: { title: "UTO-ID" },
             margin: {
                 t: 0,
