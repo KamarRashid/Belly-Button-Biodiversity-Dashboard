@@ -1,5 +1,5 @@
 # Plotly-Challenge - Belly Button Biodiversity
-[Belly Button Biodiversity Dashboard](https://kamarrashid.github.io/Plotly-Challenge/)
+[Belly Button Biodiversity Dashboard](https://kamarrashid.github.io/Belly-Button-Biodiversity-Dashboard/)
 
 ![Bacteria by filterforge.com](Images/bacteria.jpg)
 
